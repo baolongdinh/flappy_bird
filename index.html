@@ -13,10 +13,12 @@
             margin: 0;
             background: #70c5ce;
             font-family: Arial, sans-serif;
+            overflow: hidden;
         }
         canvas {
             border: 5px solid #fff;
             background: #70c5ce;
+            display: block;
         }
         #gameOver {
             position: absolute;
@@ -31,13 +33,21 @@
 </head>
 <body>
 
-    <canvas id="gameCanvas" width="1200" height="600"></canvas>
+    <canvas id="gameCanvas"></canvas>
     <div id="gameOver">Game Over! Press R to Restart</div>
 
-    <script> 
+    <script>
         const canvas = document.getElementById("gameCanvas");
-         const ctx = canvas.getContext("2d");    
-  
+        const ctx = canvas.getContext("2d");
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth * 0.9; // 90% of the viewport width
+            canvas.height = window.innerHeight * 0.85; // 85% of the viewport height
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas(); // Initial resize
+
         const bird = {
             x: 50,
             y: canvas.height / 2,
@@ -46,7 +56,7 @@
             gravity: 0.6,
             lift: -10,
             velocity: 0,
-            jump() {
+            jump() {    
                 this.velocity += this.lift;
             },
             update() {
@@ -68,21 +78,21 @@
         };
 
         const pipes = [];
-        const pipeWidth = 50;
-        const pipeGap = 300;
+        const pipeWidth = canvas.width * 0.1   ;
+        const pipeGap = canvas.height * 0.5 ;
         let frame = 0;
         let score = 0;
         let gameOver = false;
 
         function createPipe() {
-            const height = Math.random() * (canvas.height - pipeGap - 40) + 40;
+            const height = Math.random() * (canvas.height - pipeGap - canvas.height*0.1) + canvas.height*0.1;
             pipes.push({
                 x: canvas.width,
                 top: height,
-                bottom: canvas.height - height - pipeGap,
+                bottom: canvas.height - height - pipeGap,  
                 width: pipeWidth
             });
-        }
+        } 
 
         function drawPipes() {
             ctx.fillStyle = "green";
