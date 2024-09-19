@@ -169,9 +169,6 @@
         });
 
 
-        let longTouchTimer;
-        const LONG_TOUCH_DURATION = 1000; // Duration for a long touch in milliseconds
-
 
         // New touch event listener for mobile
         document.addEventListener("touchstart", (e) => {
@@ -179,24 +176,11 @@
 
             if (!gameOver) {
                 bird.jump();
-            }
-
-            if (gameOver) {
-                longTouchTimer = setTimeout(() => {
+            } else {
                 resetGame();
                 gameLoop();
-            }, LONG_TOUCH_DURATION);
             }
 
-        });
-
-
-        touchArea.addEventListener('touchend', (e) => {
-            clearTimeout(longTouchTimer); // Clear the timer if touch ends
-        });
-
-        touchArea.addEventListener('touchcancel', (e) => {
-            clearTimeout(longTouchTimer); // Clear the timer if touch is canceled
         });
 
         gameLoop();
