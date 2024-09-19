@@ -188,7 +188,7 @@
                 if (
                     bird.x < pipe.x + pipe.width - objectRemoval &&
                     bird.x + bird.width > pipe.x + objectRemoval &&
-                    (bird.y < pipe.top + objectRemoval || bird.y + bird.height > canvas.height - pipe.bottom + objectRemoval)
+                    (bird.y < pipe.top - objectRemoval || bird.y + bird.height > canvas.height - pipe.bottom + objectRemoval)
                 ) {
                     gameOver = true;
                 }
