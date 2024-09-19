@@ -52,11 +52,16 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas(); // Initial resize
 
+
+        // Load the bird image
+        const birdImage = new Image();
+        birdImage.src = 'asset/bird.png'; 
+
         const bird = {
             x: 50,
-            y: canvas.height / 2,
-            width: 20,
-            height: 20,
+            y: canvas.height / 2, 
+            width: canvas.height*0.09 ,
+            height: canvas.height*0.09,
             gravity: 0.6,
             lift: -10,
             velocity: 0,
@@ -76,17 +81,17 @@
                 }
             },
             draw() {
-                ctx.fillStyle = "yellow";
-                ctx.fillRect(this.x, this.y, this.width, this.height);
+                ctx.drawImage(birdImage, this.x, this.y, this.width, this.height);
             }
         };
 
         const pipes = [];
-        const pipeWidth = canvas.width * 0.1;
+        const pipeWidth = canvas.width * 0.05;
         const pipeGap = canvas.height * 0.5;
-        let frame = 0;
+        let frame = 0;  
         let score = 0;
         let gameOver = false;
+        let objectRemoval = canvas.height*0.002
 
         function createPipe() {
             const height = Math.random() * (canvas.height - pipeGap - canvas.height * 0.1) + canvas.height * 0.1;
@@ -116,9 +121,9 @@
                 }
                 // Collision detection
                 if (
-                    bird.x < pipe.x + pipe.width &&
-                    bird.x + bird.width > pipe.x &&
-                    (bird.y < pipe.top || bird.y + bird.height > canvas.height - pipe.bottom)
+                    bird.x < pipe.x + pipe.width - objectRemoval &&
+                    bird.x + bird.width > pipe.x + objectRemoval &&  
+                    (bird.y < pipe.top + objectRemoval || bird.y + bird.height > canvas.height - pipe.bottom + objectRemoval)
                 ) {
                     gameOver = true;
                 }
