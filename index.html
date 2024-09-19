@@ -32,17 +32,60 @@
             font-size: 24px;
             display: none;
         }
+
+        .custom-select {
+            position: relative;
+            width: 200px;
+            cursor: pointer;
+        }
+        .selected {
+            border: 1px solid #000;
+            padding: 10px;
+            background: #fff;
+            text-align: center;
+        }
+
+        .selectChoose{ 
+            position: absolute;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+       
+
     </style>
 </head>
 
 <body>
 
-    <canvas id="gameCanvas"></canvas>
-    <div id="gameOver">Game Over! Press R Or Press To The Screen 1 Second to Restart</div>
+    <div class="selectChoose" id="selectChoose">
+        <h1>Select Your Bird</h1>
+        <select id="birdSelector">
+            <option value="">--Choose a Bird--</option>
+            <option value="asset/red_bird.png">Red Bird</option>
+            <option value="asset/black_bird.png">Black Bird</option>
+            <option value="asset/yellow_bird.png">Yellow Bird</option>
+        </select>
+        <button id="startButton" disabled>Start Game</button>
+    </div>
+ 
+
+
+    <canvas id="gameCanvas" style="display:none;"></canvas>
+    <div id="gameOver">Game Over! Press R Or Touch The Screen to Restart</div>
 
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
+        const birdSelector = document.getElementById('birdSelector');
+        const startButton = document.getElementById('startButton');
+        const selectChoose = document.getElementById('selectChoose');
+        
+
+        // Load the bird image
+        const birdImage = new Image();
+        let bird = null;
 
         function resizeCanvas() {
             canvas.width = window.innerWidth * 0.9; // 90% of the viewport width
@@ -53,45 +96,67 @@
         resizeCanvas(); // Initial resize
 
 
-        // Load the bird image
-        const birdImage = new Image();
-        birdImage.src = 'asset/bird.png'; 
-
-        const bird = {
-            x: 50,
-            y: canvas.height / 2, 
-            width: canvas.height*0.09 ,
-            height: canvas.height*0.09,
-            gravity: 0.6,
-            lift: -10,
-            velocity: 0,
-            jump() {
-                this.velocity += this.lift;
-            },
-            update() {
-                this.velocity += this.gravity;
-                this.y += this.velocity;
-                if (this.y + this.height >= canvas.height) {
-                    this.y = canvas.height - this.height;
-                    this.velocity = 0;
-                }
-                if (this.y < 0) {
-                    this.y = 0;
-                    this.velocity = 0;
-                }
-            },
-            draw() {
-                ctx.drawImage(birdImage, this.x, this.y, this.width, this.height);
+        // Event listener for bird selection
+        birdSelector.addEventListener('change', (e) => {
+            const selectedValue = e.target.value;
+            if (selectedValue) {
+                birdImage.src = selectedValue;
+                birdImage.onload = () => {
+                    bird = createBird(selectedValue);
+                    startButton.disabled = false; // Enable start button
+                };
+            } else {
+                startButton.disabled = true; // Disable if no selection
             }
-        };
+        });
+
+        // Start game when button is clicked
+        startButton.addEventListener('click', () => {
+            canvas.style.display = 'block'; // Show canvas
+            selectChoose.style.display = "none"
+            gameLoop();
+        });
+
+
+        function createBird(imageSrc) {
+            return {
+                x: 50,
+                y: canvas.height / 2,
+                width: canvas.height * 0.09,
+                height: canvas.height * 0.09,
+                gravity: 0.6,
+                lift: -10,
+                velocity: 0,
+                jump() {
+                    this.velocity += this.lift;
+                },
+                update() {
+                    this.velocity += this.gravity;
+                    this.y += this.velocity;
+                    if (this.y + this.height >= canvas.height) {
+                        this.y = canvas.height - this.height;
+                        this.velocity = 0;
+                    }
+                    if (this.y < 0) {
+                        this.y = 0;
+                        this.velocity = 0;
+                    }
+                },
+                draw() {
+                    ctx.drawImage(birdImage, this.x, this.y, this.width, this.height);
+                }
+            }
+        }
+
+
 
         const pipes = [];
         const pipeWidth = canvas.width * 0.05;
         const pipeGap = canvas.height * 0.5;
-        let frame = 0;  
+        let frame = 0;
         let score = 0;
         let gameOver = false;
-        let objectRemoval = canvas.height*0.005
+        let objectRemoval = canvas.height * 0.005
 
         function createPipe() {
             const height = Math.random() * (canvas.height - pipeGap - canvas.height * 0.1) + canvas.height * 0.1;
@@ -122,7 +187,7 @@
                 // Collision detection
                 if (
                     bird.x < pipe.x + pipe.width - objectRemoval &&
-                    bird.x + bird.width > pipe.x + objectRemoval &&  
+                    bird.x + bird.width > pipe.x + objectRemoval &&
                     (bird.y < pipe.top + objectRemoval || bird.y + bird.height > canvas.height - pipe.bottom + objectRemoval)
                 ) {
                     gameOver = true;
