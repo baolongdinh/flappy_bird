@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,11 +16,13 @@
             font-family: Arial, sans-serif;
             overflow: hidden;
         }
+
         canvas {
             border: 5px solid #fff;
             background: #70c5ce;
             display: block;
         }
+
         #gameOver {
             position: absolute;
             top: 50%;
@@ -31,6 +34,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <canvas id="gameCanvas"></canvas>
@@ -56,7 +60,7 @@
             gravity: 0.6,
             lift: -10,
             velocity: 0,
-            jump() {    
+            jump() {
                 this.velocity += this.lift;
             },
             update() {
@@ -78,21 +82,21 @@
         };
 
         const pipes = [];
-        const pipeWidth = canvas.width * 0.1   ;
-        const pipeGap = canvas.height * 0.5 ;
+        const pipeWidth = canvas.width * 0.1;
+        const pipeGap = canvas.height * 0.5;
         let frame = 0;
         let score = 0;
         let gameOver = false;
 
         function createPipe() {
-            const height = Math.random() * (canvas.height - pipeGap - canvas.height*0.1) + canvas.height*0.1;
+            const height = Math.random() * (canvas.height - pipeGap - canvas.height * 0.1) + canvas.height * 0.1;
             pipes.push({
                 x: canvas.width,
                 top: height,
-                bottom: canvas.height - height - pipeGap,  
+                bottom: canvas.height - height - pipeGap,
                 width: pipeWidth
             });
-        } 
+        }
 
         function drawPipes() {
             ctx.fillStyle = "green";
@@ -164,8 +168,17 @@
             }
         });
 
+        // New touch event listener for mobile
+        document.addEventListener("touchstart", (e) => {
+            e.preventDefault(); // Prevent scrolling when tapping on the canvas
+            if (!gameOver) {
+                bird.jump();
+            }
+        });
+
         gameLoop();
     </script>
 
 </body>
+
 </html>
