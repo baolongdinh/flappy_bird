@@ -181,13 +181,14 @@
                 bird.jump();
             }
 
-            longTouchTimer = setTimeout(() => {
+            if (gameOver) {
+                longTouchTimer = setTimeout(() => {
                 resetGame();
                 gameLoop();
             }, LONG_TOUCH_DURATION);
+            }
 
         });
-
 
 
         touchArea.addEventListener('touchend', (e) => {
