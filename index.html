@@ -179,7 +179,7 @@
         canvas.addEventListener('touchmove', (e) => {
             e.preventDefault();
             const touches = e.touches;
-            if (touches.length > 10) {
+            if (touches.length > 3) {
                 resetGame();
                 gameLoop();
             }
